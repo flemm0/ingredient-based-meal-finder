@@ -1,16 +1,10 @@
 import cats.effect.*
-import org.http4s.client.Client
-import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.*
-import org.http4s.implicits.*
-import org.http4s.client.dsl.io.*
-import io.circe.Decoder
-import io.circe.generic.semiauto.*
-import io.circe.parser.decode
+import org.http4s.client.Client
+import io.circe.parser.*
 
 import RecipeFinder.model.*
 import MealJson.MealsResponse
-
 
 object MealDbApiAccess:
   
@@ -35,13 +29,3 @@ object MealDbApiAccess:
       .flatMap(body =>
         IO.fromEither(decode[MealsResponse](body))
       )
-
-  val run: IO[MealsResponse] = EmberClientBuilder
-    .default[IO]
-    .build
-    .use { client =>
-      for
-        uri <- apiEndpointBuilder(RandomMeal)
-        response <- runApiQuery(client, uri)
-      yield response
-    }
