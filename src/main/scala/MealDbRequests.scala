@@ -41,7 +41,7 @@ object MealDbApiAccess:
       case RandomMeal | MealById(_) =>
         decode[MealsResponse](body).map(Right(_))
       case MealBySingleIngredient(_) =>
-        deocde[MealSummaryResponse](body).map(Left(_))
+        decode[MealSummaryResponse](body).map(Left(_))
     
   def mealRecipeFromApi(
     client: Client[IO],
