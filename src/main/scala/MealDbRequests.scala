@@ -33,21 +33,22 @@ object MealDbApiAccess:
           .map(_.withQueryParam("i", mealId.value))
       )
 
-  def mealsFilteredByIngredient() = ???
-
-  // TODO: Need to re-run query if using filter on single ingredient
-  def mealRecipeFromApi(client: Client[IO],
-      endpointType: EndpointType): IO[Either[MealSummaryResponse, MealsResponse]] =
-    apiEndpointBuilder(endpointType).flatMap { uri =>
-      endpointType match
-        case RandomMeal | MealById(_) =>
-          client.expect[String](uri)
-            .flatMap(body =>
-              IO.fromEither(decode[MealsResponse](body).map(Right(_)))
-            )
-        case MealBySingleIngredient(_) =>
-          client.expect[String](uri)
-            .flatMap(body =>
-              IO.fromEither(decode[MealSummaryResponse](body).map(Left(_)))
-            )
-    }
+  private def decodeResponse(
+    endpoint: EndpointType,
+    body: String
+  ): Either[Throwable, Either[MealSummaryResponse, MealsResponse]] =
+    endpoint match
+      case RandomMeal | MealById(_) =>
+        decode[MealsResponse](body).map(Right(_))
+      case MealBySingleIngredient(_) =>
+        deocde[MealSummaryResponse](body).map(Left(_))
+    
+  def mealRecipeFromApi(
+    client: Client[IO],
+    endpoint: EndpointType
+  ): IO[Either[MealSummaryResponse, MealsResponse]] =
+    for
+      uri  <- apiEndpointBuilder(endpoint)
+      body <- client.expect[String](uri)
+      resp <- IO.fromEither(decodeResponse(endpoint, body))
+    yield resp
