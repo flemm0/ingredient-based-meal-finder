@@ -37,7 +37,7 @@ object MealDbApiAccess:
 
   // TODO: Need to re-run query if using filter on single ingredient
   def mealRecipeFromApi(client: Client[IO],
-      endpointType: EndpointType): IO[Either[FilteredMealsResponse, MealsResponse]] =
+      endpointType: EndpointType): IO[Either[MealSummaryResponse, MealsResponse]] =
     apiEndpointBuilder(endpointType).flatMap { uri =>
       endpointType match
         case RandomMeal | MealById(_) =>
@@ -48,6 +48,6 @@ object MealDbApiAccess:
         case MealBySingleIngredient(_) =>
           client.expect[String](uri)
             .flatMap(body =>
-              IO.fromEither(decode[FilteredMealsResponse](body).map(Left(_)))
+              IO.fromEither(decode[MealSummaryResponse](body).map(Left(_)))
             )
     }

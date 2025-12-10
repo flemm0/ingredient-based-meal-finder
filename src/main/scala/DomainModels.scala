@@ -45,3 +45,6 @@ object DomainModels:
 
   case class Meal(id: MealId, name: String, category: MealCategory,
                   area: MealArea, instructions: String, ingredients: List[Ingredient])
+
+  // smaller response with only name and id of a meal
+  case class MealSummary(name: MealName, id: MealId)

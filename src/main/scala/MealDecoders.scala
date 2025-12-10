@@ -54,12 +54,11 @@ object MealDecoders:
   given Decoder[MealsResponse] = deriveDecoder
 
   // decoder for response for filter endpoint
-  case class FilteredMeal(name: MealName, id: MealId)
-  given Decoder[FilteredMeal] = Decoder.instance { cursor =>
+  given Decoder[MealSummary] = Decoder.instance { cursor =>
     for name <- cursor.get[MealName]("strMeal")
         id   <- cursor.get[MealId]("idMeal")
-    yield FilteredMeal(name, id)  
+    yield MealSummary(name, id)  
   }
 
-  case class FilteredMealsResponse(meals: List[FilteredMeal])
-  given Decoder[FilteredMealsResponse] = deriveDecoder
+  case class MealSummaryResponse(meals: List[MealSummary])
+  given Decoder[MealSummaryResponse] = deriveDecoder
