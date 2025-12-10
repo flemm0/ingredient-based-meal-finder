@@ -1,8 +1,8 @@
 import cats.effect.IO
 
-import MealDbApiAccess.MealApiEndpoint.*
-import RecipeFinder.model.Ingredient
-import MealDbApiAccess.MealApiEndpoint
+import MealDbApiAccess.EndpointType
+import MealDbApiAccess.EndpointType.*
+import DomainModels.Ingredient
 
 
 object UserInput:
@@ -18,7 +18,7 @@ object UserInput:
       ingredientName <- prompt("Please enter the name of an ingredient to search a recipe for:")
     yield MealBySingleIngredient(Ingredient(ingredientName, ""))
 
-  def searchTypeInteractive(): IO[MealApiEndpoint] =
+  def searchTypeInteractive(): IO[EndpointType] =
     for
       input <- prompt("""
         Please enter [1] to find a random recipe or

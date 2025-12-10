@@ -1,8 +1,8 @@
-object MealJson:
+object MealDecoders:
 
   import io.circe.*
   import io.circe.generic.semiauto.*
-  import RecipeFinder.model.*
+  import DomainModels.*
 
   given Decoder[MealId] = Decoder.decodeInt.map(MealId(_))
   given Decoder[MealName] = Decoder.decodeString.map(MealName(_))
@@ -34,10 +34,10 @@ object MealJson:
           case _                           => None
       }
     for
-      id <- cursor.get[Int]("idMeal")
-      name <- cursor.get[String]("strMeal")
-      category <- cursor.get[MealCategory]("strCategory")
-      area <- cursor.get[MealArea]("strArea")
+      id           <- cursor.get[Int]("idMeal")
+      name         <- cursor.get[String]("strMeal")
+      category     <- cursor.get[MealCategory]("strCategory")
+      area         <- cursor.get[MealArea]("strArea")
       instructions <- cursor.downField("strInstructions").as[String]
     yield Meal(
             MealId(id),
@@ -52,3 +52,14 @@ object MealJson:
   // wrapper for full API response
   case class MealsResponse(meals: List[Meal])
   given Decoder[MealsResponse] = deriveDecoder
+
+  // decoder for response for filter endpoint
+  case class FilteredMeal(name: MealName, id: MealId)
+  given Decoder[FilteredMeal] = Decoder.instance { cursor =>
+    for name <- cursor.get[MealName]("strMeal")
+        id   <- cursor.get[MealId]("idMeal")
+    yield FilteredMeal(name, id)  
+  }
+
+  case class FilteredMealsResponse(meals: List[FilteredMeal])
+  given Decoder[FilteredMealsResponse] = deriveDecoder

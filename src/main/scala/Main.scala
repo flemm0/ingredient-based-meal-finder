@@ -5,6 +5,7 @@ import org.http4s.ember.client.EmberClientBuilder
 import UserInput.searchTypeInteractive
 import MealDbApiAccess.*
 
+
 object main extends IOApp.Simple:
 
   val run: IO[Unit] = EmberClientBuilder
@@ -13,8 +14,7 @@ object main extends IOApp.Simple:
     .use { client =>
       for
         endpoint <- searchTypeInteractive()
-        uri      <- apiEndpointBuilder(endpoint)
-        response <- runApiQuery(client, uri)
-        _        <- IO.println(response)
+        response <- mealRecipeFromApi(client, endpoint)
+        _        <- IO.println(response.toString())
       yield ()
     }
