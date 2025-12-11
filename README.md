@@ -1,14 +1,26 @@
-## “What Can I Cook?” Ingredient-Based Meal Finder
+## “What Can I Cook?” — Ingredient-Based Meal Finder
 
-A simple meal recommender based on ingredients a user already has at home.
+Lightweight CLI that queries TheMealDB to fetch recipes. The current code implements an interactive command-line flow allowing users to either fetch a random recipe or search for meals by a single ingredient, then view the full recipe and ingredients for a selected meal.
 
-Business Requirements
-- Users must be able to maintain a list of ingredients they currently have.
-- The app should recommend meals where the user has most of the necessary ingredients.
-- Each recommendation must display:
-    - Missing ingredients
-    - Percentage match
-    - Recipe thumbnail + title
-- Clicking a meal shows the full recipe and instructions.
-    - Users can add missing ingredients to a “Shopping List.”
-- Users can filter results by category (e.g., Beef, Seafood) or region.
+**Current Features**
+- **Random recipe**: fetch a random meal and display its ingredients and instructions.
+- **Search by single ingredient**: search the filter endpoint for meals containing an ingredient, pick one, and view the full recipe.
+- **Interactive prompts**: simple CLI prompts drive the flow.
+
+**How to run**
+- Run interactively with sbt:
+
+    `sbt run`
+
+- Run tests with:
+
+    `sbt test`
+
+**APIs used**
+- Uses TheMealDB public API endpoints:
+    - `https://www.themealdb.com/api/json/v1/1/random.php` (random meal)
+    - `https://www.themealdb.com/api/json/v1/1/filter.php?i=<ingredient>` (search by ingredient)
+    - `https://www.themealdb.com/api/json/v1/1/lookup.php?i=<id>` (lookup by id) a
+
+**Dependencies**
+- Built with Scala 3, using `cats-effect`, `http4s-ember-client`, and `circe` for JSON decoding.
