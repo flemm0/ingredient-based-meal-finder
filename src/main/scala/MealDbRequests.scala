@@ -1,7 +1,8 @@
 import cats.effect.*
 import org.http4s.*
 import org.http4s.client.Client
-import io.circe.parser.*
+import io.circe.Decoder
+import io.circe.jawn.decode
 
 import DomainModels.*
 import MealDecoders.*
