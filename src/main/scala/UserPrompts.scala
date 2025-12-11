@@ -23,14 +23,16 @@ object UserInput:
     yield MealBySingleIngredient(Ingredient(ingredientName, ""))
 
   def searchTypeInteractive(): IO[EndpointType] =
+    val message = """
+    |Please enter one of the following letters:
+    |[r] to find a random recipe
+    |[i] to search a recipe by a specific ingredient
+    """.stripMargin
     for
-      input <- prompt("""
-        Please enter [1] to find a random recipe or
-        [2] to search a recipe by a specific ingredient
-      """)
+      input <- prompt(message)
       result <- input match
-        case "1" => IO.pure(RandomMeal)
-        case "2" => ingredientInputInteractive()
+        case "r" => IO.pure(RandomMeal)
+        case "i" => ingredientInputInteractive()
         case _   => IO.println("Please enter either [1] or [2]") *> searchTypeInteractive()
     yield result
 
@@ -68,3 +70,20 @@ object UserInput:
           yield fullMeals
     yield response
 
+  def prettyPrintMealRecipe(response: MealsResponse): String =
+    response.meals.headOption match
+      case None => "No meal found."
+      case Some(meal) =>
+        val ingredients = meal.ingredients
+          .map(ing => s"- ${ing.name}: ${ing.measure}")
+          .mkString("\n")
+      
+        s"""
+        |Here is how to make **${meal.name}**, a ${meal.area} ${meal.category} dish:
+        |
+        |These are the required ingredients and their amounts:
+        |$ingredients
+        |
+        |These are the step-by-step instructions:
+        |${meal.instructions.trim}
+        """.stripMargin
