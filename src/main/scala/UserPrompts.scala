@@ -73,6 +73,10 @@ object UserInput:
             yield fullMeals
     yield response
 
+  def indefiniteArticle(word: String): String =
+    val vowels = Set('a', 'e', 'i', 'o', 'u')
+    if word.nonEmpty && vowels.contains(word.toLowerCase().head) then "an" else "a"
+
   def prettyPrintMealRecipe(response: MealsResponse): String =
     response.meals.headOption match
       case None => "Sorry, no meal recipes were found."
@@ -82,7 +86,8 @@ object UserInput:
           .mkString("\n")
       
         s"""
-        |Here is how to make **${meal.name}**, a ${meal.area} ${meal.category} dish:
+        |Here is how to make **${meal.name}**,
+        |${indefiniteArticle(meal.area.toString())} ${meal.area} ${meal.category.toString().toLowerCase()} dish:
         |
         |These are the required ingredients and their amounts:
         |$ingredients
