@@ -46,7 +46,11 @@ object MealDecoders:
 
   // wrapper for full API response
   case class MealsResponse(meals: List[Meal])
-  given Decoder[MealsResponse] = deriveDecoder
+  given Decoder[MealsResponse] = Decoder.instance { cursor =>
+    for
+      mealsOpt <- cursor.get[Option[List[Meal]]]("meals")
+    yield MealsResponse(mealsOpt.getOrElse(Nil))
+  }
 
   // decoder for response for filter endpoint
   given Decoder[MealSummary] = Decoder.instance { cursor =>
@@ -56,4 +60,8 @@ object MealDecoders:
   }
 
   case class MealSummaryResponse(meals: List[MealSummary])
-  given Decoder[MealSummaryResponse] = deriveDecoder
+  given Decoder[MealSummaryResponse] = Decoder.instance { cursor =>
+    for
+      mealsOpt <- cursor.get[Option[List[MealSummary]]]("meals")
+    yield MealSummaryResponse(mealsOpt.getOrElse(Nil))
+  }

@@ -56,23 +56,26 @@ object UserInput:
   def runInteractive(client: Client[IO]): IO[MealsResponse] =
     for
       searchType <- searchTypeInteractive()
-      eitherResponse <- MealDbApiAccess.mealRecipeFromApi(client, searchType)
+      eitherResponse <- mealRecipeFromApi(client, searchType)
 
       response <- eitherResponse match
         case Right(fullMeals) => IO.pure(fullMeals) // already a full MealsResponse
-        case Left(summary) => 
-          for
-            mealById <- pickMealFromSummary(summary)
-            fullMealsEither <- MealDbApiAccess.mealRecipeFromApi(client, mealById)
-            fullMeals <- fullMealsEither match
-              case Right(mr) => IO.pure(mr)
-              case Left(_)   => IO.raiseError(new Exception("Unexpected summary response"))
-          yield fullMeals
+        case Left(summary) => summary match
+          case summary @ MealSummaryResponse(meals) if meals.isEmpty =>
+            IO.pure(MealsResponse(Nil)) // no meals found
+          case summary =>
+            for
+              mealById <- pickMealFromSummary(summary)
+              fullMealsEither <- mealRecipeFromApi(client, mealById)
+              fullMeals <- fullMealsEither match
+                case Right(mr) => IO.pure(mr)
+                case Left(_)   => IO.raiseError(new Exception("Unexpected summary response"))
+            yield fullMeals
     yield response
 
   def prettyPrintMealRecipe(response: MealsResponse): String =
     response.meals.headOption match
-      case None => "No meal found."
+      case None => "Sorry, no meal recipes were found."
       case Some(meal) =>
         val ingredients = meal.ingredients
           .map(ing => s"- ${ing.name}: ${ing.measure}")
