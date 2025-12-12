@@ -2,20 +2,15 @@ object MealDecoders:
 
   import io.circe.*
   import io.circe.generic.semiauto.*
-  import DomainModels.*
+  import DomainModel.*
 
   given Decoder[MealId] = Decoder.decodeInt.map(MealId(_))
   given Decoder[MealName] = Decoder.decodeString.map(MealName(_))
-  
+  given Decoder[MealArea] = Decoder.decodeString.map(MealArea(_))
   given Decoder[MealCategory] = Decoder.decodeString.emap(s =>
     MealCategory.values.find(_.toString == s)
       .toRight(s"Invalid MealCategory: $s")
   )
-  given Decoder[MealArea] = Decoder.decodeString.emap(s =>
-    MealArea.values.find(_.toString == s)
-      .toRight(s"Invalid MealArea: $s")
-  )
-
   given Decoder[Ingredient] = deriveDecoder
 
   given Decoder[Meal] = Decoder.instance { cursor =>

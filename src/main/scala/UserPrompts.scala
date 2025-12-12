@@ -5,7 +5,7 @@ import org.http4s.client.Client
 import MealDbApiAccess.EndpointType
 import MealDbApiAccess.EndpointType.*
 import MealDbApiAccess.*
-import DomainModels.Ingredient
+import DomainModel.Ingredient
 import MealDecoders.{MealSummaryResponse, MealsResponse}
 
 

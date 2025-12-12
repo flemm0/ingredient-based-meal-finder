@@ -4,7 +4,7 @@ import org.http4s.client.Client
 import io.circe.Decoder
 import io.circe.jawn.decode
 
-import DomainModels.*
+import DomainModel.*
 import MealDecoders.*
 
 object MealDbApiAccess:

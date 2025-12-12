@@ -1,5 +1,4 @@
-
-object DomainModels:
+object DomainModel:
 
   opaque type MealId = Int
   object MealId:
@@ -10,11 +9,10 @@ object DomainModels:
     case Beef, Breakfast, Chicken, Dessert, Goat, Lamb, Miscellaneous,
         Pasta, Pork, Seafood, Side, Starter, Vegan, Vegetarian
   
-  enum MealArea:
-    case American, British, Canadian, Chinese, Dutch, Egyptian, French,
-        Greek, Indian, Irish, Italian, Jamaican, Japanese, Kenyan,
-        Malaysian, Mexican, Moroccan, Nigerian, Polish, Portuguese,
-        Russian, Spanish, Thai, Tunisian, Turkish, Vietnamese
+  opaque type MealArea = String
+  object MealArea:
+    def apply(area: String): MealArea = area
+    extension (mealArea: MealArea) def value: String = mealArea
 
   opaque type MealName = String
   object MealName:
