@@ -12,11 +12,8 @@ import MealDecoders.{MealSummaryResponse, MealsResponse}
 object UserInput:
 
   def prompt(msg: String): IO[String] =
-    for
-      _        <- IO.println(s"$msg ")
-      response <- IO.readLine
-    yield response
-  
+    IO.println(msg) *> IO.readLine
+
   private def promptAndMap[T](msg: String)(f: String => T): IO[T] =
     for
       input <- prompt(msg)
