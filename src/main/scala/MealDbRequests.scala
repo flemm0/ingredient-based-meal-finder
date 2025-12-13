@@ -13,6 +13,7 @@ object MealDbApiAccess:
     case RandomMeal
     case MealBySingleIngredient(ingredient: Ingredient)
     case MealById(mealId: MealId)
+    case MealByArea(mealArea: MealArea)
 
   import EndpointType.*
 
@@ -33,6 +34,13 @@ object MealDbApiAccess:
           .fromString("https://www.themealdb.com/api/json/v1/1/lookup.php")
           .map(_.withQueryParam("i", mealId.value))
       )
+    
+    case MealByArea(mealArea) =>
+      IO.fromEither(
+        Uri
+          .fromString("https://www.themealdb.com/api/json/v1/1/filter.php")
+          .map(_.withQueryParam("a", mealArea.value))
+      )
 
   private def decodeResponse(
     endpoint: EndpointType,
@@ -41,7 +49,7 @@ object MealDbApiAccess:
     endpoint match
       case RandomMeal | MealById(_) =>
         decode[MealsResponse](body).map(Right(_))
-      case MealBySingleIngredient(_) =>
+      case MealBySingleIngredient(_) | MealByArea(_) =>
         decode[MealSummaryResponse](body).map(Left(_))
     
   def mealRecipeFromApi(

@@ -5,7 +5,7 @@ import org.http4s.client.Client
 import MealDbApiAccess.EndpointType
 import MealDbApiAccess.EndpointType.*
 import MealDbApiAccess.*
-import DomainModel.Ingredient
+import DomainModel.{Ingredient, MealArea, MealId}
 import MealDecoders.{MealSummaryResponse, MealsResponse}
 
 
@@ -15,25 +15,37 @@ object UserInput:
     for
       _        <- IO.println(s"$msg ")
       response <- IO.readLine
-    yield response 
-
-  def ingredientInputInteractive(): IO[MealBySingleIngredient] =
+    yield response
+  
+  private def promptAndMap[T](msg: String)(f: String => T): IO[T] =
     for
-      ingredientName <- prompt("Please enter the name of an ingredient to search a recipe for:")
-    yield MealBySingleIngredient(Ingredient(ingredientName, ""))
+      input <- prompt(msg)
+    yield f(input)
+
+  private def areaFilterInteractive(): IO[MealByArea] =
+    promptAndMap("Please enter the area (cuisine) you want to search a recipe for:") { areaName =>
+      MealByArea(MealArea(areaName))
+    }
+
+  private def ingredientFilterInteractive(): IO[MealBySingleIngredient] =
+    promptAndMap("Please enter the ingredient you want to search a recipe for:") { ingredientName =>
+      MealBySingleIngredient(Ingredient(ingredientName, ""))
+    }
 
   def searchTypeInteractive(): IO[EndpointType] =
     val message = """
     |Please enter one of the following letters:
     |[r] to find a random recipe
     |[i] to search a recipe by a specific ingredient
+    |[a] to search a recipe by a specific area
     """.stripMargin
     for
       input <- prompt(message)
       result <- input match
         case "r" => IO.pure(RandomMeal)
-        case "i" => ingredientInputInteractive()
-        case _   => IO.println("Please enter either [1] or [2]") *> searchTypeInteractive()
+        case "i" => ingredientFilterInteractive()
+        case "a" => areaFilterInteractive()
+        case _   => IO.println("Please enter a valid input]") *> searchTypeInteractive()
     yield result
 
   def pickMealFromSummary(summary: MealSummaryResponse): IO[MealById] =
