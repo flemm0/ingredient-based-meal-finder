@@ -1,10 +1,11 @@
-## “What Can I Cook?” — Ingredient-Based Meal Finder
+## “What Can I Cook?” — Console-Based Meal Recipe Finder
 
 Lightweight CLI that queries TheMealDB to fetch recipes. The current code implements an interactive command-line flow allowing users to either fetch a random recipe or search for meals by a single ingredient, then view the full recipe and ingredients for a selected meal.
 
 **Current Features**
 - **Random recipe**: fetch a random meal and display its ingredients and instructions.
 - **Search by single ingredient**: search the filter endpoint for meals containing an ingredient, pick one, and view the full recipe.
+- **Search by meal area (region)**
 - **Interactive prompts**: simple CLI prompts drive the flow.
 
 **How to run**
